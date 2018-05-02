@@ -1,0 +1,14 @@
+
+- name: Install Docker
+  yum:
+    name:
+      - "docker-1.13.1"
+    state: "present"
+
+- name: Update Docker config
+  shell: echo "INSECURE_REGISTRY='--insecure-registry 172.30.0.0/16'" >> /etc/sysconfig/docker
+  become: true
+
+- name: Enable and restart Docker
+  shell: "systemctl enable docker && systemctl restart docker"
+  become: true

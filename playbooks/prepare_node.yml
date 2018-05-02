@@ -1,0 +1,10 @@
+
+- name: Prepare the nodes
+  hosts: container_hosts
+  remote_user: "{{ instance_user }}"
+  
+  roles:
+    - role: ../roles/prepare_os
+    - role: ../roles/install_docker
+    - role: ../roles/activate_firewall
+    - role: ../roles/reboot

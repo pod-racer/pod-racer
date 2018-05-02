@@ -1,0 +1,3 @@
+
+- name: Reboot the machine
+  shell: nohup bash -c "sleep 5s && shutdown -r now" &
