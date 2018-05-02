@@ -1,0 +1,5 @@
+
+- name: Upgrade the instances
+  hosts: localhost
+  roles:
+    - role: ../roles/upgrade_os

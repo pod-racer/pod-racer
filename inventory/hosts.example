@@ -1,0 +1,12 @@
+#
+# WARNING: MAKE SURE THIS FILE GETS NEVER COMMITED TO ANY REPO !!!
+#
+
+all:
+  hosts:
+    localhost:
+      ansible_connection: local
+      ansible_python_interpreter: python
+  vars:
+    # Key used for authentication
+    ansible_ssh_private_key_file: ~/.ssh/xyz_rsa
