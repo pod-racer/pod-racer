@@ -1,0 +1,15 @@
+
+- name: Install a containerized, single node OCP
+  hosts: ocp_hosts
+  remote_user: "{{ instance_user }}"
+
+  vars:
+    openshift_version: v3.9.0
+    openshift_cli_url: "https://github.com/openshift/origin/releases/download/v3.9.0/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz"
+    openshift_logging: false
+    openshift_metrics: false
+    openshift_service_catalog: false
+    ocp_root: "/opt/openshift"
+  
+  roles:
+    - role: ../roles/single_node_ocp
