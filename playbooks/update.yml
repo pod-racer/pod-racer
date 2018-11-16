@@ -1,10 +1,10 @@
 
-- name: Prepare the nodes
+- name: Update the server instance
   hosts: centos_hosts
   remote_user: "{{ instance_user }}"
   
   roles:
-    - role: ../roles/prepare_centos
+    - role: ../roles/update_centos
     - role: ../roles/install_docker
     - role: ../roles/activate_firewall
     - role: ../roles/reboot
