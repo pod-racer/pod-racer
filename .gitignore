@@ -1,5 +1,6 @@
 # Tmp files
 tmp/
+conf/
 
 # Used by dotenv library to load environment variables.
 .env

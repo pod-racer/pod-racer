@@ -8,5 +8,20 @@
 - name: Allow http/https
   command: firewall-cmd --zone=public --permanent --add-service=http --add-service=https
 
+- name: Extra Ports
+  command: firewall-cmd --permanent --zone=public --add-port 8443/tcp
+  
+- name: Docker Firewall Config
+  shell: >
+        firewall-cmd --permanent --new-zone dockerc
+
+        firewall-cmd --permanent --zone dockerc --add-source 172.17.0.0/16
+
+        firewall-cmd --permanent --zone dockerc --add-port 8443/tcp
+
+        firewall-cmd --permanent --zone dockerc --add-port 53/udp
+
+        firewall-cmd --permanent --zone dockerc --add-port 8053/udp
+
 - name: Restart the firewall
   service: name=firewalld state=restarted

@@ -1,13 +1,7 @@
 
 - name: Prepare the node
   shell: >
-        mkdir -p {{ ocp_root }}/v1
-
-        mkdir -p {{ ocp_root }}/v2
-
-        mkdir -p {{ ocp_root }}/v3
-
-        mkdir -p {{ ocp_root }}/v4
+        mkdir -p {{ ocp_root }}
 
         chmod -R 777 {{ ocp_root }}
 
@@ -18,18 +12,30 @@
         cd /tmp/op* && sudo mv oc /usr/local && sudo ln -sf /usr/local/oc
         /usr/local/bin/oc
   
+- name: Create the OpenShift cluster-create script
+  shell: >
+        echo "/usr/local/oc cluster up --public-hostname='{{ hostname }}.{{ public_dns_zone }}'
+        --base-dir={{ ocp_root }}
+        --routing-suffix='{{ apps__prefix }}.{{ hostname }}.{{ public_dns_zone }}'
+        --enable=persistent-volumes,registry,router,web-console,service-catalog,template-service-broker
+        --write-config=true" >>
+        {{ ocp_root }}/cluster_create
+
+        chmod +x {{ ocp_root }}/cluster_create
+
 - name: Create the OpenShift cluster-up script
   shell: >
         echo "/usr/local/oc cluster up --public-hostname='{{ hostname }}.{{ public_dns_zone }}'
-        --routing-suffix='{{ apps_subdomain_prefix }}.{{ hostname }}.{{ public_dns_zone }}' 
-        --host-config-dir={{ ocp_root }}/v1
-        --host-data-dir={{ ocp_root }}/v2
-        --host-pv-dir={{ ocp_root }}/v3
-        --host-volumes-dir={{ ocp_root }}/v4 
-        --use-existing-config=true --logging={{ openshift_logging }} --metrics={{ openshift_metrics }} --service-catalog={{ openshift_service_catalog }} --version={{ openshift_version }}" >>
+        --base-dir={{ ocp_root }}" >>
         {{ ocp_root }}/cluster_up
 
         chmod +x {{ ocp_root }}/cluster_up
+
+- name: Fix https://github.com/minishift/minishift-centos-iso/issues/222
+  shell: echo '172.30.1.1 docker-registry.default.svc' >> /etc/hosts
+
+- name: Initialize the OpenShift cluster
+  shell: "{{ ocp_root }}/cluster_create"
 
 - name: Start the OpenShift cluster
   shell: "{{ ocp_root }}/cluster_up"
