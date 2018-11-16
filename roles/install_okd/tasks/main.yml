@@ -17,7 +17,7 @@
         echo "/usr/local/oc cluster up --public-hostname='{{ hostname }}.{{ public_dns_zone }}'
         --base-dir={{ okd_root }}
         --routing-suffix='{{ apps__prefix }}.{{ hostname }}.{{ public_dns_zone }}'
-        --enable=persistent-volumes,registry,router,web-console,service-catalog,template-service-broker
+        --enable=persistent-volumes,registry,router,web-console,service-catalog,template-service-broker,centos-imagestreams
         --write-config=true" >>
         {{ okd_root }}/cluster_create
 
