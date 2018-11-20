@@ -15,3 +15,6 @@ automation-service-broker, rhel-imagestreams, service-catalog, template-service-
 
 
 oc cluster up --base-dir='./conf' --routing-suffix='apps' --enable=* --write-config=true
+
+
+docker create --name dd-agent --restart always -v /var/run/docker.sock:/var/run/docker.sock:ro -v /proc/:/host/proc/:ro -v /sys/fs/cgroup/:/host/sys/fs/cgroup:ro -e DD_API_KEY=xyz datadog/agent:latest

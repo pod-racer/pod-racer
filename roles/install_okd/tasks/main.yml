@@ -16,7 +16,7 @@
   shell: >
         echo "/usr/local/oc cluster up --public-hostname='{{ hostname }}.{{ public_dns_zone }}'
         --base-dir={{ okd_root }}
-        --routing-suffix='{{ apps__prefix }}.{{ hostname }}.{{ public_dns_zone }}'
+        --routing-suffix='{{ apps_prefix }}.{{ hostname }}.{{ public_dns_zone }}'
         --enable=persistent-volumes,registry,router,web-console,service-catalog,template-service-broker,centos-imagestreams
         --write-config=true" >>
         {{ okd_root }}/cluster_create
@@ -33,6 +33,18 @@
 
 - name: Fix https://github.com/minishift/minishift-centos-iso/issues/222
   shell: echo '172.30.1.1 docker-registry.default.svc' >> /etc/hosts
+
+- name: Install dd-agent
+  shell: >
+        docker create --name dd-agent --restart always -v /var/run/docker.sock:/var/run/docker.sock:ro -v /proc/:/host/proc/:ro -v /sys/fs/cgroup/:/host/sys/fs/cgroup:ro -e DD_API_KEY={{ DD_API_KEY }} datadog/agent:latest
+
+        docker start dd-agent
+        
+#- name: Create default users
+#  shell: >
+#        htpasswd -c -b {{ okd_root }}/users.htpasswd admin {{ default_passwd }}
+#
+#        htpasswd -c -b {{ okd_root }}/users.htpasswd developer {{ default_passwd }}
 
 - name: Initialize the OpenShift cluster
   shell: "{{ okd_root }}/cluster_create"

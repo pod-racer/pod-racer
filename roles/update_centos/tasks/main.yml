@@ -23,6 +23,7 @@
       - "psacct"
       - "NetworkManager"
       - "firewalld"
+      - "httpd-tools"
     state: "present"
 
 - name: Enable NetworkManager
