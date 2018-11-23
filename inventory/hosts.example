@@ -8,10 +8,7 @@ all:
       ansible_connection: local
       ansible_python_interpreter: python
   children:
-    centos_hosts:
-      hosts:
-        www.example.com:
-    container_hosts:
+    okd_hosts:
       hosts:
         www.example.com:
           hostname: www

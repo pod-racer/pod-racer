@@ -1,0 +1,10 @@
+
+
+- name: Create the cluster start script
+  shell: >
+        echo "#!/usr/bin/env bash
+        
+        /usr/local/oc cluster up --public-hostname='{{ hostname }}.{{ public_dns_zone }}' --base-dir={{ okd_root }}" >>
+        {{ okd_root }}/cluster_start
+
+        chmod +x {{ okd_root }}/cluster_start

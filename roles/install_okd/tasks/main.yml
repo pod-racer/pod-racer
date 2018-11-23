@@ -5,31 +5,34 @@
 
         chmod -R 777 {{ okd_root }}
 
-- name: Install the CLI
+- name: Install the OpenShift CLI
   shell: >
         curl -L -0 {{openshift_cli_url}} | tar -zx -C /tmp
 
         cd /tmp/op* && sudo mv oc /usr/local && sudo ln -sf /usr/local/oc
         /usr/local/bin/oc
   
-- name: Create the OpenShift cluster-create script
+- name: Create the cluster init script
   shell: >
-        echo "/usr/local/oc cluster up --public-hostname='{{ hostname }}.{{ public_dns_zone }}'
+        echo "echo "#!/usr/bin/env bash
+        
+        /usr/local/oc cluster up --public-hostname='{{ hostname }}.{{ public_dns_zone }}'
         --base-dir={{ okd_root }}
         --routing-suffix='{{ apps_prefix }}.{{ hostname }}.{{ public_dns_zone }}'
         --enable=persistent-volumes,registry,router,web-console,service-catalog,template-service-broker,centos-imagestreams
         --write-config=true" >>
-        {{ okd_root }}/cluster_create
+        {{ okd_root }}/cluster_init
 
-        chmod +x {{ okd_root }}/cluster_create
+        chmod +x {{ okd_root }}/cluster_init
 
-- name: Create the OpenShift cluster-up script
+- name: Create the cluster start script
   shell: >
-        echo "/usr/local/oc cluster up --public-hostname='{{ hostname }}.{{ public_dns_zone }}'
-        --base-dir={{ okd_root }}" >>
-        {{ okd_root }}/cluster_up
+        echo "#!/usr/bin/env bash
+        
+        /usr/local/oc cluster up --public-hostname='{{ hostname }}.{{ public_dns_zone }}' --base-dir={{ okd_root }}" >>
+        {{ okd_root }}/cluster_start
 
-        chmod +x {{ okd_root }}/cluster_up
+        chmod +x {{ okd_root }}/cluster_start
 
 - name: Fix https://github.com/minishift/minishift-centos-iso/issues/222
   shell: echo '172.30.1.1 docker-registry.default.svc' >> /etc/hosts
@@ -40,14 +43,17 @@
 
         docker start dd-agent
         
-#- name: Create default users
-#  shell: >
-#        htpasswd -c -b {{ okd_root }}/users.htpasswd admin {{ default_passwd }}
-#
-#        htpasswd -c -b {{ okd_root }}/users.htpasswd developer {{ default_passwd }}
+- name: Initialize the cluster
+  shell: "{{ okd_root }}/cluster_init"
 
-- name: Initialize the OpenShift cluster
-  shell: "{{ okd_root }}/cluster_create"
+- name: Create a service unit for the cluster
+  template:
+    src: "../files/okd.service"
+    dest: "/etc/systemd/system/okd.service"
+  become: true
 
-- name: Start the OpenShift cluster
-  shell: "{{ okd_root }}/cluster_up"
+- name: Enable the service
+  shell: "systemctl enable okd"
+
+- name: Start the service
+  shell: "systemctl start okd"

@@ -1,6 +1,6 @@
 
 - name: Update the server instance
-  hosts: centos_hosts
+  hosts: okd_hosts
   remote_user: "{{ instance_user }}"
   
   roles:

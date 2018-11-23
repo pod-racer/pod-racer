@@ -9,4 +9,8 @@
     okd_root: "/opt/origin"
   
   roles:
+    - role: ../roles/update_centos
+    - role: ../roles/install_docker
+    - role: ../roles/activate_firewall
+  #  - role: ../roles/reboot
     - role: ../roles/install_okd

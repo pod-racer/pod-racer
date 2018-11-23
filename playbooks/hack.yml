@@ -1,0 +1,10 @@
+
+- name: Hacks
+  hosts: okd_hosts
+  remote_user: "{{ instance_user }}"
+
+  vars:
+    okd_root: "/opt/origin"
+  
+  roles:
+    - role: ../roles/hack

@@ -1,0 +1,8 @@
+[Unit]
+Description=OpenShift
+
+[Service]
+ExecStart=/opt/origin/cluster_start
+
+[Install]
+WantedBy=multi-user.target
